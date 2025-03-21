@@ -1,0 +1,3 @@
+*.o
+jaccard_dist
+.#makefile#
