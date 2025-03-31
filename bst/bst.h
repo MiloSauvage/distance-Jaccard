@@ -64,7 +64,9 @@ extern void bst_repr_graphic(bst *t, void (*put)(const void *ref));
 
 
 
+extern void *add_word(char *word, bst *root);
 
+extern void *add_letter(char *word, bst *root);
 
 
 #endif

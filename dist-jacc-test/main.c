@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "bst.h"
+#include "stream.h"
 #include "scale.h"
+
 
 //int main(){
   //const char *a = "ABCDE";
@@ -36,47 +38,44 @@ void put(const void *p) {
 //=======le main========
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
+    if (argc < 2) {
         fprintf(stderr, "Usage: %s <string>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    char *input = argv[1];
 
     // creation arbre
-    bst *tree = bst_empty((int (*)(const void *, const void *)) strcmp);
-    if (tree == NULL) {
+    bst *root = bst_empty((int (*)(const void *, const void *)) strcmp);
+    if (root == NULL) {
         fprintf(stderr, "Erreur : Impossible d’allouer l’arbre binaire.\n");
         return EXIT_FAILURE;
     }
 
-    // Ajout arbre
-    for (int i = 0; input[i] != '\0'; i++) {
-        char *letter = malloc(sizeof(char));
-        if (letter == NULL) {
-            fprintf(stderr, "Erreur : Allocation mémoire échouée.\n");
-            bst_dispose(&tree);
-            return EXIT_FAILURE;
-        }
-         // Stocke la lettre
-        *letter = input[i];
+    //ajout un mot dans l'abre
+    if(argc == 2){
+        add_letter(argv[1], root);
+        printf("Arbre binaire :\n");
+        bst_repr_graphic(root, put);
+        bst_dispose(&root);
+        return EXIT_SUCCESS;
+    }
 
-        if (bst_add_endofpath(tree, letter) == NULL) {
-            fprintf(stderr, "Erreur : Impossible d’ajouter '%c' dans l’arbre.\n", input[i]);
-            free(letter);
+    // Ajout mots arbre
+    for (int i = 1; i < argc; i++) {
+        if (add_word(argv[i], root) == nullptr ){
+            fprintf(stderr, "Erreur lors de l'ajout du mot '%s'\n", argv[i]);
         }
     }
 
     // Affichage basique
     printf("Arbre binaire :\n");
-    bst_repr_graphic(tree, put);
+    bst_repr_graphic(root, put);
     printf("\n");
 
-    bst_dispose(&tree);
+    bst_dispose(&root);
 
     return EXIT_SUCCESS;
 }
-
 
 
 

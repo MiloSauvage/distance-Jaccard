@@ -12,6 +12,7 @@ typedef struct cbst cbst;
 struct cbst {
   cbst *next[2];
   const void *ref;
+  size_t count;
 };
 
 //-- petite macro --
@@ -30,6 +31,40 @@ struct cbst {
 #define REF(p)      ((p)->ref)
 #define NEXT(p, d)  ((p)->next[(d) > 0])
 
+
+//===========test
+void *add_word(char *ref, bst *root) {
+  char *word = malloc(sizeof(*word));
+  if (word == nullptr) {
+    return nullptr;
+  }
+  word = ref;
+  if (bst_add_endofpath(root, word) == nullptr) {
+    free(word);
+    return nullptr;
+  }
+  return word;
+}
+
+void *add_letter(char *word, bst *root) {
+  for (int i = 0; word[i] != '\0'; i++) {
+    char *letter = malloc(sizeof(char));
+    if (letter == nullptr) {
+      bst_dispose(&root);
+      return nullptr;
+    }
+    *letter = word[i];
+    if (bst_add_endofpath(root, letter) == nullptr) {
+      free(letter);
+      return nullptr;
+    }
+  }
+  return word;
+}
+
+
+
+//======== fin du test
 
 //--- Fonctions cbst -----------------------------------------------------------
 
@@ -54,10 +89,12 @@ static void *cbst__add_endofpath(cbst **pp, const void *ref,
       }
       *pp = p;
       (*pp)->ref = ref;
+      (*pp) -> count = 1;
       return (void *) ref;
     }
     int c = compar(ref, (*pp)->ref);
     if (c == 0) {
+      (*pp)->count += 1;
       return (void *)(*pp)->ref;
     }
   return cbst__add_endofpath(&NEXT(*pp, c), ref, compar);
@@ -75,7 +112,7 @@ static void cbst__repr_graphic(const cbst *p,
   }
   cbst__repr_graphic(RIGHT(p), put, level + 1);
   printf("%*s", (int) (REPR_TAB * level), "");
-  put(p->ref);
+  printf("%zu:%s",p->count, (char *)p->ref);
   printf("\n");
   cbst__repr_graphic(LEFT(p), put, level + 1);
 }
