@@ -2,6 +2,7 @@
 //   ABINR du TDA ABinR(T).
 
 #include "bst.h"
+#include <string.h>
 
 //=== Type cbst ================================================================
 
@@ -16,7 +17,7 @@ struct cbst {
 };
 
 //-- petite macro --
-#define REPR_TAB 4
+#define REPR_TAB 8
 #define REPR_SPACE " "
 #define REPR_NODE "o"
 #define REPR_EMPTY "|"
@@ -32,18 +33,18 @@ struct cbst {
 #define NEXT(p, d)  ((p)->next[(d) > 0])
 
 
-//===========test
+//===========test =========
 void *add_word(char *ref, bst *root) {
-  char *word = malloc(sizeof(*word));
-  if (word == nullptr) {
-    return nullptr;
-  }
-  word = ref;
-  if (bst_add_endofpath(root, word) == nullptr) {
-    free(word);
-    return nullptr;
-  }
-  return word;
+    if (!ref) return NULL;
+
+    char *word_copy = strdup(ref);  // Alloue + copie en une opération
+    if (!word_copy) return nullptr;
+
+    if (!bst_add_endofpath(root, word_copy)) {
+        free(word_copy);
+        return nullptr;
+    }
+    return word_copy;
 }
 
 void *add_letter(char *word, bst *root) {

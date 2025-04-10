@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "bst.h"
+#include "../bst/bst.h"
 
 
 //recupère un mot dans le fichier et l'ajoute à l'arbre binaire,
@@ -8,4 +8,7 @@
 // size : taille du mot à récupérer
 // t : arbre binaire dans lequel on ajoute le mot
 // f : fichier dans lequel on récupère le mot
-extern int retreive_word(FILE *f, bst *t, size_t size);
+extern int retreive_word(FILE *f, bst *t, size_t size
+);
+
+  //void *(*add_word)(char *word, bst *root)

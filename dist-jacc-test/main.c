@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bst.h"
 #include "stream.h"
+#include "bst.h"
 #include "scale.h"
 
 
@@ -30,9 +30,7 @@
 
 // =======fonction outil=======
 void put(const void *p) {
-  int x;
-  scale_value(p, &x);
-  printf("%d", x);
+  int x; scale_value(p, &x);printf("%d", x);
 }
 
 //=======le main========
@@ -53,19 +51,30 @@ int main(int argc, char *argv[]) {
 
     //ajout un mot dans l'abre
     if(argc == 2){
+      const char *resultat = strstr(argv[1],".txt");
+      if(resultat != nullptr){
+        FILE *f = fopen(argv[1], "r");
+        if(retreive_word(f, root, 100) == 1){
+          return EXIT_FAILURE;
+        }
+        fclose(f);
+      }
+      else{
         add_letter(argv[1], root);
         printf("Arbre binaire :\n");
         bst_repr_graphic(root, put);
         bst_dispose(&root);
         return EXIT_SUCCESS;
+      }
+
     }
 
-    // Ajout mots arbre
-    for (int i = 1; i < argc; i++) {
-        if (add_word(argv[i], root) == nullptr ){
-            fprintf(stderr, "Erreur lors de l'ajout du mot '%s'\n", argv[i]);
-        }
-    }
+     //Ajout mots arbre
+    //for (int i = 1; i < argc; i++) {
+        //if (add_word(argv[i], root) == nullptr ){
+            //fprintf(stderr, "Erreur lors de l'ajout du mot '%s'\n", argv[i]);
+        //}
+    //}
 
     // Affichage basique
     printf("Arbre binaire :\n");

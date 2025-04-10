@@ -1,22 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bst.h"
 #include <ctype.h>
 #include "stream.h"
+#include "../bst/bst.h"
 
-int retreive_word(FILE *f, bst *t, size_t size){
-    int k = 0;
+
+ //void *(*add_word)(char *word, bst *root)
+int retreive_word(FILE *f, bst *t, size_t size
+ ){
+    size_t k = 0;
     char *word = malloc(size * sizeof(char));
     if(word == NULL){
         return -1;
     }
     int c;
+    printf("test\n");
     while((c =fgetc(f)) != EOF){
+      printf("%c\n",c);
         if(isspace(c)){
-            word + (k+ 1) * sizeof(char) = '\0';
-            bst_add_endofpath(t, word);
+            word[k] = '\0';
+            printf("%s\n\n", word);
+            add_word(word, t);
             free(word);
+            word = malloc(size * sizeof(char));
             k = 0;
         }
         if(k == size - 1){
@@ -24,13 +31,13 @@ int retreive_word(FILE *f, bst *t, size_t size){
             if(word == nullptr){
                 return -1;
             }
-        }
-        word + k * sizeof(char) = c;
+        }printf("%c",c);
+        word[k] = (char)c;
         ++k;
     }
     if(k > 0){
-        word + (k + 1) * sizeof(char) = '\0';
-        bst_add_endofpath(t, word);
+        word[k] = '\0';
+        add_word(word, t);
     }
     free(word);
     return 0;
