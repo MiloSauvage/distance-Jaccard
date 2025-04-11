@@ -40,48 +40,59 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage: %s <string>\n", argv[0]);
         return EXIT_FAILURE;
     }
-
-
-    // creation arbre
-    bst *root = bst_empty((int (*)(const void *, const void *)) strcmp);
-    if (root == NULL) {
-        fprintf(stderr, "Erreur : Impossible d’allouer l’arbre binaire.\n");
-        return EXIT_FAILURE;
+    //tableau d'arbre binaire
+    bst **roots = malloc((size_t)argc * sizeof(*roots));
+    if(roots == nullptr){
+      return EXIT_FAILURE;
     }
 
-    //ajout un mot dans l'abre
-    if(argc == 2){
-      const char *resultat = strstr(argv[1],".txt");
-      if(resultat != nullptr){
-        FILE *f = fopen(argv[1], "r");
-        if(retreive_word(f, root, 100) == 1){
-          return EXIT_FAILURE;
+
+    // creation des arbres
+    for (int j = 1; j < argc; ++j) {
+
+        roots[j] = bst_empty((int (*)(const void *, const void *)) strcmp);
+        if (roots[j] == nullptr) {
+            fprintf(stderr, "Erreur : Impossible d’allouer l’arbre binaire numéro %d.\n", j);
+            for (int k = 1; k <= j; ++k) {
+                bst_dispose(&roots[k]);
+            }
+            free(roots);
+            return EXIT_FAILURE;
         }
-        fclose(f);
+    }
+
+    //==ajout dans les arbres==
+    for (int q = 1; q < argc; ++q) {
+      const char *resultat = strstr(argv[1],".txt");
+      if(resultat == nullptr){
+        //==quand on ajoute les lettes de chaque mot dans un arbres
+
+        add_letter(argv[q], roots[q]);
       }
       else{
-        add_letter(argv[1], root);
-        printf("Arbre binaire :\n");
-        bst_repr_graphic(root, put);
-        bst_dispose(&root);
-        return EXIT_SUCCESS;
+        //===quand c'est des fichier txt
+        const char *checkpoint = strstr(argv[q],".txt");
+        if(checkpoint == nullptr){
+            fprintf(stderr,"Error : %s <file.txt>", argv[q]);
+            return EXIT_FAILURE;
+        }
+        FILE *f = fopen(argv[q], "r");
+        if (f == nullptr) {
+            fprintf(stderr, "Erreur : Impossible d'ouvrir le fichier %s.\n", argv[q]);
+            return EXIT_FAILURE;
+        }
+
+        if (retreive_word(f, roots[q], 100) != 0) {
+            fprintf(stderr, "Erreur lors de l’extraction des mots depuis %s.\n", argv[q]);
+            fclose(f);
+            return EXIT_FAILURE;
+        }
+
+        fclose(f);
       }
-
+      printf("Arbre binaire %d :\n", q);
+      bst_repr_graphic(roots[q], put);
     }
-
-     //Ajout mots arbre
-    //for (int i = 1; i < argc; i++) {
-        //if (add_word(argv[i], root) == nullptr ){
-            //fprintf(stderr, "Erreur lors de l'ajout du mot '%s'\n", argv[i]);
-        //}
-    //}
-
-    // Affichage basique
-    printf("Arbre binaire :\n");
-    bst_repr_graphic(root, put);
-    printf("\n");
-
-    bst_dispose(&root);
 
     return EXIT_SUCCESS;
 }

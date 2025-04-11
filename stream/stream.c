@@ -15,12 +15,9 @@ int retreive_word(FILE *f, bst *t, size_t size
         return -1;
     }
     int c;
-    printf("test\n");
     while((c =fgetc(f)) != EOF){
-      printf("%c\n",c);
         if(isspace(c)){
             word[k] = '\0';
-            printf("%s\n\n", word);
             add_word(word, t);
             free(word);
             word = malloc(size * sizeof(char));
