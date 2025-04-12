@@ -74,8 +74,9 @@ extern void *add_word(char *word, bst *root);
 
 extern void *add_letter(char *word, bst *root);
 
-//t1 et 2 ne sont pas vide à l'entrer
-extern int distance(bst *t1, bst* t2);
+extern int bst_common_word(bst *t1, bst* t2);
+
+extern int bst_union_tree(bst *t1, bst* t2);
 
 
 #endif

@@ -66,8 +66,6 @@ void *add_letter(char *word, bst *root) {
   return word;
 }
 
-
-
 //======== fin du test
 
 //--- Fonctions cbst -----------------------------------------------------------
@@ -106,11 +104,12 @@ static void *cbst__add_endofpath(cbst **pp, const void *ref,
 
 void *cbst__search(cbst **pp, const void *ref,
   int (*compar)(const void *, const void *)){
-    if(pp == nullptr){
+    if(*pp == nullptr){
       return nullptr;
     }
     int c = compar(ref, (*pp)->ref);
      if (c == 0) {
+       printf("[mot trouver : %s]\n", (char*)(*pp)->ref);
         return (void *)(*pp)->ref;
       }
     return cbst__search(&NEXT(*pp, c), ref, compar);
@@ -207,14 +206,14 @@ void *bst_search(bst *t, const void *ref){
     return cbst__search(&t -> root, ref, t->compar);
 }
 
-int common_word(bst *t1, bst* t2){
+int bst_common_word(bst *t1, bst* t2){
   if(IS_EMPTY(t1) || IS_EMPTY(t2)){
       return 0;
   }
   return cbst__commun_word(t1->root, t2);
 }
 
-int union_tree(bst *t1, bst* t2){
+int bst_union_tree(bst *t1, bst* t2){
   if(IS_EMPTY(t1) && IS_EMPTY(t2)){
       return 0;
   }

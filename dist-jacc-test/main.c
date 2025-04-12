@@ -92,7 +92,10 @@ int main(int argc, char *argv[]) {
       }
       printf("Arbre binaire %d :\n", q);
       bst_repr_graphic(roots[q], put);
+
     }
+    printf("l'intersection : %d\n", bst_common_word(roots[1], roots[2]));
+    //printf("l'union : %d", bst_union_tree(roots[1], roots[2]));
 
     return EXIT_SUCCESS;
 }
