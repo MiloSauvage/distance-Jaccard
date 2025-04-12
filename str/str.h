@@ -5,3 +5,4 @@ int common_letters(const char *a, const char *b);
 // total_letters : renvoie le nombre total de lettre différentes aux deux
 //    chaines de caractères.
 int total_letters(const char *a, const char *b);
+

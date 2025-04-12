@@ -33,7 +33,10 @@ struct cbst {
 #define NEXT(p, d)  ((p)->next[(d) > 0])
 
 
-//===========test =========
+
+
+
+//===========letter + word =========
 void *add_word(char *ref, bst *root) {
     if (!ref) return NULL;
 
@@ -101,6 +104,48 @@ static void *cbst__add_endofpath(cbst **pp, const void *ref,
   return cbst__add_endofpath(&NEXT(*pp, c), ref, compar);
 }
 
+void *cbst__search(cbst **pp, const void *ref,
+  int (*compar)(const void *, const void *)){
+    if(pp == nullptr){
+      return nullptr;
+    }
+    int c = compar(ref, (*pp)->ref);
+     if (c == 0) {
+        return (void *)(*pp)->ref;
+      }
+    return cbst__search(&NEXT(*pp, c), ref, compar);
+}
+
+int cbst__commun_word(cbst *t1, bst *t2) {
+    if (t1 == nullptr) {
+        return 0;
+    }
+
+    int count = (bst_search(t2, t1->ref) != nullptr) ? 1 : 0;
+
+    return count + cbst__commun_word(LEFT(t1), t2)
+                + cbst__commun_word(RIGHT(t1), t2);
+}
+
+
+int cbst__union_tree(cbst *t, char *message, size_t size){
+    if(t -> ref == nullptr){
+      return 0;
+    }
+    const char *check = strstr(message, t->ref);
+    if (check == nullptr) {
+      if(strcat(message, t->ref) == nullptr){
+        message = realloc(message, sizeof(char) * size * 2);
+        strcat(message, t->ref);
+        fprintf(stderr, "Error : pas possible de faire l'union");
+        return EXIT_FAILURE;
+      }
+      return 1 + cbst__union_tree(LEFT(t), message, size)
+        + cbst__union_tree(RIGHT(t), message, size);
+    }
+    return 0 + cbst__union_tree(LEFT(t), message, size)
+        + cbst__union_tree(RIGHT(t), message, size);
+}
 
 #define REPR__TAB 4
 
@@ -155,6 +200,34 @@ void *bst_add_endofpath(bst *t, const void *ref){
   return cbst__add_endofpath(&t->root, ref, t->compar);
 }
 
+void *bst_search(bst *t, const void *ref){
+    if(ref == nullptr){
+      return nullptr;
+    }
+    return cbst__search(&t -> root, ref, t->compar);
+}
+
+int common_word(bst *t1, bst* t2){
+  if(IS_EMPTY(t1) || IS_EMPTY(t2)){
+      return 0;
+  }
+  return cbst__commun_word(t1->root, t2);
+}
+
+int union_tree(bst *t1, bst* t2){
+  if(IS_EMPTY(t1) && IS_EMPTY(t2)){
+      return 0;
+  }
+  size_t size = 100;
+  char *message = malloc(sizeof(char) * size);
+  if(message == nullptr){
+     return -1;
+  }
+  int count = cbst__union_tree(t1->root, message, size)
+    + cbst__union_tree(t2->root, message, size);
+  free(message);
+  return count;
+}
 
 void bst_repr_graphic(bst *t, void (*put)(const void *ref)) {
   if (t == NULL || IS_EMPTY(t->root)) {

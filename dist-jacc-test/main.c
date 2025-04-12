@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         //===quand c'est des fichier txt
         const char *checkpoint = strstr(argv[q],".txt");
         if(checkpoint == nullptr){
-            fprintf(stderr,"Error : %s <file.txt>", argv[q]);
+            fprintf(stderr,"Error : %s <file.txt>\n", argv[q]);
             return EXIT_FAILURE;
         }
         FILE *f = fopen(argv[q], "r");

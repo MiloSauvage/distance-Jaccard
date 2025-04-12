@@ -63,10 +63,19 @@ extern void *bst_add_endofpath(bst *t, const void *ref);
 extern void bst_repr_graphic(bst *t, void (*put)(const void *ref));
 
 
+//  bst_search : renvoie un pointeur nul si ref vaut un pointeur nul. Recherche
+//    sinon dans l'arbre binaire de recherche associé à t la référence d'un
+//    objet égal à celui de référence ref au sens de la fonction de comparaison.
+//    Renvoie un pointeur nul si la recherche est négative, la référence trouvée
+//    sinon.
+extern void *bst_search(bst *t, const void *ref);
 
 extern void *add_word(char *word, bst *root);
 
 extern void *add_letter(char *word, bst *root);
+
+//t1 et 2 ne sont pas vide à l'entrer
+extern int distance(bst *t1, bst* t2);
 
 
 #endif
