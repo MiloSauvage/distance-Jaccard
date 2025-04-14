@@ -127,22 +127,32 @@ int cbst__commun_word(cbst *t1, bst *t2) {
 }
 
 
-int cbst__union_tree(cbst *t, char *message, size_t size){
-    if(t -> ref == nullptr){
+int cbst__union_tree(cbst *t, char **message, size_t *size){
+    if(t == nullptr || t->ref  == nullptr){
       return 0;
     }
-    const char *check = strstr(message, t->ref);
+    printf("message : %s, ref :%s\n", *message, (char*)t->ref);
+    const char *check = strstr(*message, t->ref);
     if (check == nullptr) {
-      if(strcat(message, t->ref) == nullptr){
-        message = realloc(message, sizeof(char) * size * 2);
-        strcat(message, t->ref);
+      printf("%zu\n",strlen(*message) + strlen(t->ref));
+      if(strlen(*message) + strlen(t->ref) + 1 >= *size) {
+        *size *= 2;
+        *message = realloc(*message, sizeof(char) * (*size));
+        if(*message == nullptr){
+          fprintf(stderr,"Error : probleme de realloc");
+          return EXIT_FAILURE;
+        }
+      }
+      if(strcat(*message, t->ref) == nullptr){
         fprintf(stderr, "Error : pas possible de faire l'union");
         return EXIT_FAILURE;
       }
+      printf("new message : %s\n", *message);
       return 1 + cbst__union_tree(LEFT(t), message, size)
         + cbst__union_tree(RIGHT(t), message, size);
     }
-    return 0 + cbst__union_tree(LEFT(t), message, size)
+
+    return 0 + cbst__union_tree(LEFT(t), message, size);
         + cbst__union_tree(RIGHT(t), message, size);
 }
 
@@ -213,7 +223,11 @@ int bst_common_word(bst *t1, bst* t2){
   return cbst__commun_word(t1->root, t2);
 }
 
+//probleme à regler il faut toujours que ce soit
+//l'abre binaire le plus petit appeler en premier
+//sinon le resultat est fosser
 int bst_union_tree(bst *t1, bst* t2){
+  printf("tesst\n");
   if(IS_EMPTY(t1) && IS_EMPTY(t2)){
       return 0;
   }
@@ -222,10 +236,13 @@ int bst_union_tree(bst *t1, bst* t2){
   if(message == nullptr){
      return -1;
   }
-  int count = cbst__union_tree(t1->root, message, size)
-    + cbst__union_tree(t2->root, message, size);
+  message[0] = '\0';
+  int count2 = cbst__union_tree(t2->root, &message, &size);
+  printf("message after first tree : %s\n", message);
+  int count1 = cbst__union_tree(t1->root, &message, &size);
+  printf("message after seconde tree : %s\n", message);
   free(message);
-  return count;
+  return count1 + count2;
 }
 
 void bst_repr_graphic(bst *t, void (*put)(const void *ref)) {
