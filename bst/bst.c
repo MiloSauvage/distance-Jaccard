@@ -126,35 +126,49 @@ int cbst__commun_word(cbst *t1, bst *t2) {
                 + cbst__commun_word(RIGHT(t1), t2);
 }
 
-
-int cbst__union_tree(cbst *t, char **message, size_t *size){
-    if(t == nullptr || t->ref  == nullptr){
+int cbst__union_tree(cbst *t, bst *stock){
+  if(t == nullptr || t->ref == nullptr){
       return 0;
-    }
-    printf("message : %s, ref :%s\n", *message, (char*)t->ref);
-    const char *check = strstr(*message, t->ref);
-    if (check == nullptr) {
-      printf("%zu\n",strlen(*message) + strlen(t->ref));
-      if(strlen(*message) + strlen(t->ref) + 1 >= *size) {
-        *size *= 2;
-        *message = realloc(*message, sizeof(char) * (*size));
-        if(*message == nullptr){
-          fprintf(stderr,"Error : probleme de realloc");
-          return EXIT_FAILURE;
-        }
-      }
-      if(strcat(*message, t->ref) == nullptr){
-        fprintf(stderr, "Error : pas possible de faire l'union");
-        return EXIT_FAILURE;
-      }
-      printf("new message : %s\n", *message);
-      return 1 + cbst__union_tree(LEFT(t), message, size)
-        + cbst__union_tree(RIGHT(t), message, size);
-    }
-
-    return 0 + cbst__union_tree(LEFT(t), message, size);
-        + cbst__union_tree(RIGHT(t), message, size);
+  }
+  int count = 0;
+  if(bst_search(stock, t->ref) == nullptr){
+    bst_add_endofpath(stock, t->ref);
+    count = 1;
+    return count +cbst__union_tree(LEFT(t), stock)
+        + cbst__union_tree(RIGHT(t), stock);
+  }
+   return count + cbst__union_tree(LEFT(t), stock)
+        + cbst__union_tree(RIGHT(t), stock);
 }
+
+//int cbst__union_tree(cbst *t, char **message, size_t *size){
+    //if(t == nullptr || t->ref  == nullptr){
+      //return 0;
+    //}
+    //printf("message : %s, ref :%s\n", *message, (char*)t->ref);
+    //const char *check = strstr(*message, t->ref);
+    //if (check == nullptr) {
+      //printf("%zu\n",strlen(*message) + strlen(t->ref));
+      //if(strlen(*message) + strlen(t->ref) + 1 >= *size) {
+        //*size *= 2;
+        //*message = realloc(*message, sizeof(char) * (*size));
+        //if(*message == nullptr){
+          //fprintf(stderr,"Error : probleme de realloc");
+          //return EXIT_FAILURE;
+        //}
+      //}
+      //if(strcat(*message, t->ref) == nullptr){
+        //fprintf(stderr, "Error : pas possible de faire l'union");
+        //return EXIT_FAILURE;
+      //}
+      //printf("new message : %s\n", *message);
+      //return 1 + cbst__union_tree(LEFT(t), message, size)
+        //+ cbst__union_tree(RIGHT(t), message, size);
+    //}
+
+    //return 0 + cbst__union_tree(LEFT(t), message, size);
+        //+ cbst__union_tree(RIGHT(t), message, size);
+//}
 
 #define REPR__TAB 4
 
@@ -223,27 +237,44 @@ int bst_common_word(bst *t1, bst* t2){
   return cbst__commun_word(t1->root, t2);
 }
 
+int bst_union_tree(bst *t1, bst* t2){
+  if(t1 == nullptr || t2 == nullptr){
+      return -1;
+  }
+  if(IS_EMPTY(t1) && IS_EMPTY(t2)){
+        return 0;
+  }
+  bst *stock = bst_empty((int (*)(const void *, const void *)) strcmp);
+  if(stock == nullptr){
+      return -1;
+  }
+  int count = cbst__union_tree(t1->root, stock) +
+              cbst__union_tree(t2->root, stock);
+  return count;
+
+}
+
 //probleme à regler il faut toujours que ce soit
 //l'abre binaire le plus petit appeler en premier
 //sinon le resultat est fosser
-int bst_union_tree(bst *t1, bst* t2){
-  printf("tesst\n");
-  if(IS_EMPTY(t1) && IS_EMPTY(t2)){
-      return 0;
-  }
-  size_t size = 100;
-  char *message = malloc(sizeof(char) * size);
-  if(message == nullptr){
-     return -1;
-  }
-  message[0] = '\0';
-  int count2 = cbst__union_tree(t2->root, &message, &size);
-  printf("message after first tree : %s\n", message);
-  int count1 = cbst__union_tree(t1->root, &message, &size);
-  printf("message after seconde tree : %s\n", message);
-  free(message);
-  return count1 + count2;
-}
+//int bst_union_tree(bst *t1, bst* t2){
+  //printf("tesst\n");
+  //if(IS_EMPTY(t1) && IS_EMPTY(t2)){
+      //return 0;
+  //}
+  //size_t size = 100;
+  //char *message = malloc(sizeof(char) * size);
+  //if(message == nullptr){
+     //return -1;
+  //}
+  //message[0] = '\0';
+  //int count2 = cbst__union_tree(t2->root, &message, &size);
+  //printf("message after first tree : %s\n", message);
+  //int count1 = cbst__union_tree(t1->root, &message, &size);
+  //printf("message after seconde tree : %s\n", message);
+  //free(message);
+  //return count1 + count2;
+//}
 
 void bst_repr_graphic(bst *t, void (*put)(const void *ref)) {
   if (t == NULL || IS_EMPTY(t->root)) {

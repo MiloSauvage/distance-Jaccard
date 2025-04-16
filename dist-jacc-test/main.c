@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     //tableau d'arbre binaire
     bst **roots = malloc((size_t)argc * sizeof(*roots));
     if(roots == nullptr){
-      return EXIT_FAILURE;
+      return EXIT_FAsLURE;
     }
 
 
