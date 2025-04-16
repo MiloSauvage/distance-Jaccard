@@ -78,5 +78,7 @@ extern int bst_common_word(bst *t1, bst* t2);
 
 extern int bst_union_tree(bst *t1, bst* t2);
 
+extern float bst_jaccard_tree(bst *t1, bst* t2);
+
 
 #endif

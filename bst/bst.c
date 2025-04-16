@@ -132,7 +132,9 @@ int cbst__union_tree(cbst *t, bst *stock){
   }
   int count = 0;
   if(bst_search(stock, t->ref) == nullptr){
-    bst_add_endofpath(stock, t->ref);
+    if(bst_add_endofpath(stock, t->ref) == nullptr){
+      return EXIT_FAILURE;
+    }
     count = 1;
     return count +cbst__union_tree(LEFT(t), stock)
         + cbst__union_tree(RIGHT(t), stock);
@@ -237,6 +239,23 @@ int bst_common_word(bst *t1, bst* t2){
   return cbst__commun_word(t1->root, t2);
 }
 
+
+//pas vide en entrée
+float bst_jaccard_tree(bst *t1, bst *t2){
+  if(t1 == nullptr || t2 == nullptr){
+      return -1.0;
+  }
+  int numerateur = bst_common_word(t1, t2);
+  int denominateur = bst_union_tree(t1, t2);
+
+  if(denominateur == 0){
+    return 0.0;
+  }
+
+  return (float)(1.0 - ((float)numerateur/(float)denominateur));
+
+}
+
 int bst_union_tree(bst *t1, bst* t2){
   if(t1 == nullptr || t2 == nullptr){
       return -1;
@@ -250,6 +269,7 @@ int bst_union_tree(bst *t1, bst* t2){
   }
   int count = cbst__union_tree(t1->root, stock) +
               cbst__union_tree(t2->root, stock);
+  bst_dispose(&stock);
   return count;
 
 }
