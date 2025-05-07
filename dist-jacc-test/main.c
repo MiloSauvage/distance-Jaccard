@@ -1,24 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h//>
 #include <string.h>
 #include "stream.h"
 #include "bst.h"
 #include "scale.h"
-
-
-//int main(){
-  //const char *a = "ABCDE";
-  //const char *b = "BCF";
-
-  //int cl = common_letters(a, b);
-  //int tl = total_letters(a, b);
-
-  //printf("Communes : %d\n", cl);
-  //printf("Total : %d\n", tl);
-  //printf("Distance de Jaccard : %f\n", 1-((float)cl/(float)tl));
-
-  //return EXIT_SUCCESS;
-//}
 
 #define OPT__SHORT  "-"
 #define OPT__LONG   "--"
@@ -26,6 +11,26 @@
 
 #define BST_L "Binary search tree"
 
+[[noreturn]] void crash(char *argv[], const char *format, ...) {
+  va_list ap;
+  va_start(ap);
+  fprintf(stderr, "%s: ", argv[0]);
+  vfprintf(stderr, format, ap);
+  va_end(ap);
+  exit(EXIT_FAILURE);
+}
+*[[noreturn]] void help(char *argv[]) {
+  printf("Usage: %s SRC [DEST]\n", argv[0]);
+  printf("\n");
+  printf("Simulate Huffman compression of input file SRC by producing digits ");
+  printf("\"0\" and \"1\". The output is written to DEST file if specified, ");
+  printf("to standard output otherwise.");
+  printf("\n\n");
+  printf("When de SRC is \"" PROMPT_CHAR "\", read standard input. When DEST is\
+\""PROMPT_CHAR"\", ");
+  printf(" write to standard output\n");
+  exit(EXIT_SUCCESS);
+}
 
 
 // =======fonction outil=======
@@ -36,8 +41,11 @@ void put(const void *p) {
 //=======le main========
 
 int main(int argc, char *argv[]) {
+  if(argc == 0){
+    abort();QS
+  }
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+
         return EXIT_FAILURE;
     }
     //tableau d'arbre binaire
